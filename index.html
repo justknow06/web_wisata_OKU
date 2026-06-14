@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telusur OKU — Wisata Ogan Komering Ulu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root {
+  --bg: #0E1012;
+  --bg2: #161A1D;
+  --bg3: #1E2327;
+  --card: #1A1F23;
+  --border: #2A3038;
+  --border2: #384048;
+  --teal: #3ECFBF;
+  --teal-dim: #1a4a45;
+  --amber: #E8A54B;
+  --amber-dim: #3d2a0f;
+  --green: #5CB87A;
+  --muted: #6B7A87;
+  --text: #E8EDF2;
+  --text2: #9AAAB8;
+  --display: 'Fraunces', serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* ===== SPLASH SCREEN ===== */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  transition:opacity 0.6s ease, visibility 0.6s ease;
+}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.splash-logo{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  animation:splashIn 0.8s ease forwards;
+}
+@keyframes splashIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.splash-logo svg{width:80px;height:80px;}
+.splash-title{
+  font-family:var(--display);font-size:2.4rem;font-weight:600;
+  color:var(--text);letter-spacing:0.01em;text-align:center;
+}
+.splash-title span{color:var(--teal);}
+.splash-sub{
+  font-family:var(--mono);font-size:0.72rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--muted);text-align:center;
+}
+.splash-loader{
+  width:200px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;
+  animation:splashIn 0.8s ease 0.3s forwards;opacity:0;
+}
+.splash-loader-bar{
+  height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));
+  border-radius:2px;
+  animation:loadBar 2s ease forwards;
+}
+@keyframes loadBar{from{width:0%;}to{width:100%;}}
+.splash-hint{
+  font-family:var(--mono);font-size:0.7rem;color:var(--muted);
+  letter-spacing:0.1em;animation:splashIn 0.8s ease 0.5s forwards;opacity:0;
+}
+
+/* ===== TOPBAR ===== */
+header.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px clamp(20px,4vw,56px);
+  background:rgba(14,16,18,0.85);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  font-family:var(--display);font-size:1.3rem;font-weight:600;color:var(--text);
+}
+.logo svg{width:36px;height:36px;}
+.logo .teal{color:var(--teal);}
+.logo-sub{
+  font-family:var(--mono);font-size:0.58rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--muted);display:block;margin-top:1px;
+}
+nav.topnav{display:flex;gap:24px;font-size:0.9rem;}
+nav.topnav a{
+  text-decoration:none;color:var(--text2);padding:6px 2px;
+  border-bottom:2px solid transparent;transition:all .2s;
+}
+nav.topnav a:hover,nav.topnav a.aktif{color:var(--teal);border-bottom-color:var(--teal);}
+@media(max-width:680px){nav.topnav{display:none;}}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;min-height:90vh;
+  display:flex;align-items:center;
+  padding:clamp(60px,10vw,100px) clamp(20px,4vw,56px);
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 60% 40%, rgba(62,207,191,0.07) 0%, transparent 70%),
+             radial-gradient(ellipse 50% 40% at 20% 70%, rgba(232,165,75,0.06) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;z-index:0;opacity:0.04;
+  background-image:linear-gradient(var(--border) 1px, transparent 1px),
+                   linear-gradient(90deg,var(--border) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+.hero-inner{position:relative;z-index:1;max-width:720px;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:0.72rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:20px;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+h1.hero-title{
+  font-family:var(--display);font-weight:500;
+  font-size:clamp(2.6rem,6vw,4.4rem);
+  line-height:1.06;color:var(--text);margin-bottom:22px;
+}
+h1.hero-title em{font-style:italic;color:var(--teal);}
+.hero-lead{
+  font-size:clamp(1rem,1.5vw,1.15rem);color:var(--text2);
+  max-width:520px;margin-bottom:44px;line-height:1.7;
+}
+
+/* ===== SEARCH BOX ===== */
+.cari-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  padding:clamp(20px,3vw,28px);
+}
+.cari-box label{
+  display:block;font-family:var(--display);font-size:1.05rem;font-weight:500;
+  color:var(--text);margin-bottom:4px;
+}
+.cari-box .hint{font-size:0.82rem;color:var(--muted);margin-bottom:14px;}
+.cari-box textarea{
+  width:100%;min-height:80px;resize:vertical;
+  border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;font-family:var(--body);font-size:0.95rem;
+  color:var(--text);background:var(--bg3);transition:border-color .2s;
+  line-height:1.6;
+}
+.cari-box textarea:focus{outline:none;border-color:var(--teal);}
+.cari-box textarea::placeholder{color:var(--muted);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+.chip{
+  font-family:var(--mono);font-size:0.72rem;letter-spacing:0.06em;
+  padding:5px 12px;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text2);cursor:pointer;transition:all .15s;
+}
+.chip:hover{border-color:var(--teal);color:var(--teal);}
+.cari-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.btn{
+  font-family:var(--body);font-weight:600;font-size:0.9rem;
+  padding:11px 22px;border-radius:10px;border:none;cursor:pointer;
+  transition:all .15s;
+}
+.btn-primary{background:var(--teal);color:#0a1f1e;}
+.btn-primary:hover{background:#5eddd0;}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-small{padding:8px 16px;font-size:0.82rem;border-radius:8px;}
+.btn-amber{background:var(--amber);color:#1a0f00;}
+.btn-amber:hover{background:#f0bc70;}
+
+/* ===== AI RESULT ===== */
+#ai-result-box{
+  margin-top:20px;display:none;
+  background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px;
+  animation:fadeUp .4s ease;
+}
+#ai-result-box.show{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.ai-label{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.ai-label:before{content:"✦";}
+.ai-thinking{
+  font-size:0.9rem;color:var(--text2);display:flex;align-items:center;gap:10px;
+}
+.ai-thinking .dots span{
+  display:inline-block;width:6px;height:6px;background:var(--teal);border-radius:50%;margin:0 2px;
+  animation:dotBounce 1.2s infinite;
+}
+.ai-thinking .dots span:nth-child(2){animation-delay:.2s;}
+.ai-thinking .dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dotBounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-6px);}}
+#ai-text{font-size:0.92rem;color:var(--text2);line-height:1.7;margin-bottom:14px;}
+
+/* ===== CARDS GRID ===== */
+.section{padding:clamp(48px,7vw,80px) clamp(20px,4vw,56px);}
+.section-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  flex-wrap:wrap;gap:14px;margin-bottom:32px;
+  padding-bottom:20px;border-bottom:1px solid var(--border);
+}
+.section-head h2{
+  font-family:var(--display);font-weight:500;
+  font-size:clamp(1.7rem,3.5vw,2.4rem);color:var(--text);
+}
+.section-head p{font-size:0.88rem;color:var(--muted);max-width:360px;}
+
+/* filter bar */
+.filter-bar{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;
+}
+.fchip{
+  font-family:var(--mono);font-size:0.72rem;letter-spacing:0.06em;
+  padding:6px 14px;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text2);cursor:pointer;transition:all .15s;
+}
+.fchip:hover,.fchip.on{border-color:var(--teal);color:var(--teal);background:rgba(62,207,191,0.08);}
+
+.grid-wisata{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.kartu{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer;
+}
+.kartu:hover{
+  transform:translateY(-4px);border-color:var(--border2);
+  box-shadow:0 20px 50px -20px rgba(62,207,191,0.15);
+}
+.kartu .gambar{
+  height:170px;overflow:hidden;position:relative;
+}
+.kartu .gambar img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .4s ease;display:block;
+}
+.kartu:hover .gambar img{transform:scale(1.05);}
+.kartu .gambar-fallback{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;background:var(--bg3);color:var(--muted);
+}
+.kartu .badge-kat{
+  position:absolute;top:10px;left:10px;
+  font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:4px 9px;border-radius:6px;
+  background:rgba(14,16,18,0.75);color:var(--teal);
+  backdrop-filter:blur(8px);border:1px solid rgba(62,207,191,0.3);
+}
+.kartu .skor-ai{
+  position:absolute;top:10px;right:10px;
+  font-family:var(--mono);font-size:0.65rem;
+  padding:4px 9px;border-radius:6px;
+  background:rgba(232,165,75,0.2);color:var(--amber);
+  backdrop-filter:blur(8px);border:1px solid rgba(232,165,75,0.3);
+}
+.kartu .isi{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1;}
+.kartu h3{font-family:var(--display);font-size:1.15rem;font-weight:500;color:var(--text);}
+.kartu .desk{font-size:0.85rem;color:var(--text2);flex:1;line-height:1.55;}
+.fasilitas{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.fas-chip{
+  font-size:0.72rem;padding:3px 8px;border-radius:5px;
+  background:var(--bg3);color:var(--muted);
+  border:1px solid var(--border);
+}
+.fas-chip.ada{background:rgba(92,184,122,0.12);color:var(--green);border-color:rgba(92,184,122,0.3);}
+.kartu .aksi{display:flex;gap:8px;margin-top:12px;}
+
+/* ===== MAP ===== */
+#peta-section{padding:0;}
+#peta-section .section-head{
+  padding:clamp(40px,5vw,60px) clamp(20px,4vw,56px) 0;
+  border-bottom:none;margin-bottom:0;
+}
+#peta{height:460px;background:var(--bg2);}
+.leaflet-container{background:var(--bg2)!important;}
+
+/* ===== MODAL DETAIL ===== */
+.overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.show{display:flex;animation:fadeUp .25s ease;}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  max-width:560px;width:100%;max-height:90vh;overflow-y:auto;
+  position:relative;
+}
+.modal-img{
+  width:100%;height:220px;object-fit:cover;
+  border-radius:18px 18px 0 0;display:block;
+}
+.modal-img-fallback{
+  width:100%;height:220px;display:flex;align-items:center;justify-content:center;
+  font-size:3rem;background:var(--bg3);border-radius:18px 18px 0 0;
+}
+.modal-body{padding:24px 26px 28px;}
+.modal .tutup{
+  position:absolute;top:14px;right:16px;
+  background:rgba(0,0,0,0.5);border:none;color:var(--text);
+  width:32px;height:32px;border-radius:50%;font-size:1.1rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;z-index:5;
+}
+.modal .tutup:hover{background:rgba(255,255,255,0.15);}
+.modal .kat-label{
+  font-family:var(--mono);font-size:0.68rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:8px;
+}
+.modal h3{font-family:var(--display);font-size:1.7rem;font-weight:500;color:var(--text);margin-bottom:4px;}
+.modal .koordinat{
+  font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-bottom:16px;
+}
+.modal .deskripsi{font-size:0.92rem;color:var(--text2);line-height:1.7;margin-bottom:18px;}
+.modal .fas-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+
+.rute-block{
+  background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px;
+}
+.rute-block h4{
+  font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.rute-block h4:before{content:"🧭";}
+.rute-input{
+  width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:9px;
+  font-family:var(--body);font-size:0.88rem;color:var(--text);
+  background:var(--bg2);margin-bottom:8px;transition:border-color .2s;
+}
+.rute-input:focus{outline:none;border-color:var(--teal);}
+.rute-input::placeholder{color:var(--muted);}
+.btn-lokasi{
+  font-family:var(--body);font-size:0.8rem;color:var(--teal);
+  background:none;border:none;cursor:pointer;padding:0;margin-bottom:14px;
+  text-decoration:underline;
+}
+.mode-rute{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.mode-btn{
+  flex:1;min-width:80px;padding:8px 6px;border-radius:8px;
+  border:1px solid var(--border);background:transparent;
+  font-size:0.8rem;font-family:var(--body);color:var(--text2);
+  cursor:pointer;transition:all .15s;text-align:center;
+}
+.mode-btn.on,.mode-btn:hover{
+  border-color:var(--teal);background:rgba(62,207,191,0.1);color:var(--teal);
+}
+.tombol-rute{display:flex;gap:8px;flex-wrap:wrap;}
+.tombol-rute .btn{flex:1;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;}
+
+/* ===== TENTANG ===== */
+.tentang-inner{max-width:680px;}
+.tentang-inner p{color:var(--text2);font-size:0.95rem;line-height:1.75;margin-bottom:14px;}
+.stat-row{
+  display:flex;gap:32px;flex-wrap:wrap;margin-top:32px;
+  padding-top:28px;border-top:1px solid var(--border);
+}
+.stat{display:flex;flex-direction:column;gap:4px;}
+.stat .angka{font-family:var(--display);font-size:2.2rem;font-weight:600;color:var(--teal);}
+.stat .ket{font-family:var(--mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+
+/* ===== FOOTER ===== */
+footer{
+  border-top:1px solid var(--border);
+  padding:28px clamp(20px,4vw,56px);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
+}
+footer .foot-l{font-size:0.82rem;color:var(--muted);}
+footer .foot-logo{
+  display:flex;align-items:center;gap:8px;font-family:var(--display);
+  font-size:1rem;color:var(--text);
+}
+footer .foot-logo svg{width:26px;height:26px;}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH SCREEN ===== -->
+<div id="splash">
+  <div class="splash-logo">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="40" cy="40" r="39" fill="#161A1D" stroke="#2A3038" stroke-width="1.5"/>
+      <path d="M10 50 C24 36, 36 62, 48 44 C58 30, 66 54, 72 44" stroke="#3ECFBF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M18 38 L30 18 L42 38 Z" fill="#5C7A4A" opacity="0.9"/>
+      <path d="M34 40 L48 16 L62 40 Z" fill="#3d3020" stroke="#E8A54B" stroke-width="1.2"/>
+      <circle cx="48" cy="16" r="4" fill="#E8A54B"/>
+      <circle cx="22" cy="56" r="3" fill="#3ECFBF" opacity="0.6"/>
+      <circle cx="60" cy="52" r="2" fill="#3ECFBF" opacity="0.4"/>
+    </svg>
+    <div>
+      <div class="splash-title">Telusur <span>OKU</span></div>
+      <div class="splash-sub">Wisata Ogan Komering Ulu · Sumatera Selatan</div>
+    </div>
+  </div>
+  <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+  <div class="splash-hint">Memuat destinasi wisata...</div>
+</div>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="31" fill="#161A1D" stroke="#2A3038" stroke-width="1.2"/>
+      <path d="M8 40 C18 30, 28 50, 38 36 C48 24, 54 42, 60 34" stroke="#3ECFBF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M14 32 L24 14 L34 32 Z" fill="#5C7A4A"/>
+      <path d="M28 34 L40 12 L52 34 Z" fill="#3d3020" stroke="#E8A54B" stroke-width="1.5"/>
+      <circle cx="40" cy="12" r="3.5" fill="#E8A54B"/>
+    </svg>
+    <span>Telusur <span class="teal">OKU</span>
+      <span class="logo-sub">Ogan Komering Ulu</span>
+    </span>
+  </div>
+  <nav class="topnav">
+    <a href="#beranda" class="aktif">Beranda</a>
+    <a href="#destinasi">Destinasi</a>
+    <a href="#peta-section">Peta</a>
+    <a href="#tentang">Tentang</a>
+  </nav>
+</header>
+
+<!-- ===== HERO / BERANDA ===== -->
+<section class="hero" id="beranda">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Bumi Sebimbing Sekundang</div>
+    <h1 class="hero-title">Temukan wisata OKU yang pas untuk <em>suasana hatimu</em></h1>
+    <p class="hero-lead">Ceritakan apa yang ingin kamu rasakan — kami gunakan AI untuk mencocokkan destinasi terbaik di Ogan Komering Ulu untukmu.</p>
+
+    <div class="cari-box">
+      <label for="deskripsi">Kamu lagi ingin wisata seperti apa?</label>
+      <p class="hint">Tulis bebas dalam bahasa Indonesia, sedetail yang kamu mau.</p>
+      <textarea id="deskripsi" placeholder="Contoh: pengen ke tempat yang adem, ada air terjun, cocok buat foto-foto sama teman..."></textarea>
+      <div class="chips">
+        <span class="chip" onclick="pakai('air terjun sejuk untuk healing dan foto-foto')">💧 Air terjun</span>
+        <span class="chip" onclick="pakai('gua bersejarah dan arkeologi untuk edukasi')">🪨 Gua sejarah</span>
+        <span class="chip" onclick="pakai('danau atau tepi air yang tenang untuk piknik keluarga')">🌊 Tepi danau</span>
+        <span class="chip" onclick="pakai('taman bunga estetik untuk foto')">🌸 Taman & foto</span>
+        <span class="chip" onclick="pakai('panorama bukit dan pemandangan alam terbuka')">⛰️ Bukit & panorama</span>
+        <span class="chip" onclick="pakai('rekreasi keluarga dengan anak-anak, wahana dan fasilitas lengkap')">👨‍👩‍👧 Keluarga</span>
+      </div>
+      <div class="cari-row">
+        <button class="btn btn-primary" onclick="cariAI()">✦ Tanyakan AI</button>
+        <button class="btn btn-ghost" onclick="resetCari()">Reset</button>
+      </div>
+
+      <div id="ai-result-box">
+        <div class="ai-label">Rekomendasi dari AI</div>
+        <div id="ai-thinking" class="ai-thinking" style="display:none">
+          Sedang menganalisis destinasi terbaik untukmu
+          <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+        <div id="ai-text"></div>
+        <div class="grid-wisata" id="grid-ai"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DESTINASI ===== -->
+<section class="section" id="destinasi">
+  <div class="section-head reveal">
+    <div>
+      <h2>Semua Destinasi</h2>
+      <p>12 destinasi wisata pilihan di Kabupaten OKU.</p>
+    </div>
+  </div>
+  <div class="filter-bar reveal">
+    <button class="fchip on" data-kat="semua" onclick="filter(this,'semua')">Semua</button>
+    <button class="fchip" data-kat="gua" onclick="filter(this,'gua')">Gua</button>
+    <button class="fchip" data-kat="air terjun" onclick="filter(this,'air terjun')">Air Terjun</button>
+    <button class="fchip" data-kat="danau" onclick="filter(this,'danau')">Danau & Air</button>
+    <button class="fchip" data-kat="bukit" onclick="filter(this,'bukit')">Bukit</button>
+    <button class="fchip" data-kat="taman" onclick="filter(this,'taman')">Taman</button>
+    <button class="fchip" data-kat="museum" onclick="filter(this,'museum')">Museum</button>
+    <button class="fchip" data-kat="rekreasi" onclick="filter(this,'rekreasi')">Rekreasi</button>
+  </div>
+  <div class="grid-wisata" id="grid-semua"></div>
+</section>
+
+<!-- ===== PETA ===== -->
+<section id="peta-section">
+  <div class="section-head reveal" style="padding:clamp(40px,5vw,60px) clamp(20px,4vw,56px) 24px;">
+    <div>
+      <h2>Peta Destinasi</h2>
+      <p>Semua lokasi wisata OKU di satu tampilan peta interaktif.</p>
+    </div>
+  </div>
+  <div id="peta"></div>
+</section>
+
+<!-- ===== TENTANG ===== -->
+<section class="section" id="tentang">
+  <div class="section-head reveal">
+    <div><h2>Tentang OKU</h2></div>
+  </div>
+  <div class="tentang-inner reveal">
+    <p>Ogan Komering Ulu (OKU) adalah kabupaten di Provinsi Sumatera Selatan dengan ibu kota Baturaja. Wilayah ini dialiri Sungai Ogan dan dikelilingi perbukitan yang menyimpan kekayaan alam dan sejarah luar biasa.</p>
+    <p>Dari gua-gua yang menjadi situs arkeologi penting, air terjun tersembunyi, hamparan danau yang tenang, hingga taman rekreasi modern — OKU menawarkan ragam pengalaman wisata untuk semua kalangan.</p>
+    <p><strong style="color:var(--text)">Telusur OKU</strong> hadir untuk membantu wisatawan menemukan destinasi terbaik sesuai keinginan mereka, dilengkapi rekomendasi berbasis AI dan panduan rute langsung ke lokasi.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="angka">12</span><span class="ket">Destinasi Wisata</span></div>
+      <div class="stat"><span class="angka">3</span><span class="ket">Kecamatan</span></div>
+      <div class="stat"><span class="angka">AI</span><span class="ket">Powered Search</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="31" fill="#161A1D" stroke="#2A3038" stroke-width="1.2"/>
+      <path d="M8 40 C18 30, 28 50, 38 36 C48 24, 54 42, 60 34" stroke="#3ECFBF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M28 34 L40 12 L52 34 Z" fill="#3d3020" stroke="#E8A54B" stroke-width="1.5"/>
+      <circle cx="40" cy="12" r="3.5" fill="#E8A54B"/>
+    </svg>
+    Telusur OKU
+  </div>
+  <div class="foot-l">Wisata Ogan Komering Ulu, Sumatera Selatan</div>
+</footer>
+
+<!-- ===== MODAL DETAIL ===== -->
+<div class="overlay" id="overlay" onclick="tutupLuar(event)">
+  <div class="modal" id="modal">
+    <button class="tutup" onclick="tutupModal()">×</button>
+    <img id="modal-img" class="modal-img" src="" alt="" onerror="this.style.display='none';document.getElementById('modal-img-fb').style.display='flex'">
+    <div id="modal-img-fb" class="modal-img-fallback" style="display:none">🏞️</div>
+    <div class="modal-body">
+      <div class="kat-label" id="m-kat"></div>
+      <h3 id="m-nama"></h3>
+      <div class="koordinat" id="m-koord"></div>
+      <p class="deskripsi" id="m-desk"></p>
+      <div class="fas-list" id="m-fas"></div>
+      <div class="rute-block">
+        <h4>Rencanakan Rute</h4>
+        <input type="text" class="rute-input" id="rute-asal" placeholder="Titik awal perjalanan kamu...">
+        <button class="btn-lokasi" onclick="gunakanGPS()">📍 Gunakan lokasi GPS saya</button>
+        <div class="mode-rute">
+          <button class="mode-btn on" data-m="driving" onclick="setMode(this,'driving')">🚗 Mobil</button>
+          <button class="mode-btn" data-m="two-wheeler" onclick="setMode(this,'two-wheeler')">🏍️ Motor</button>
+          <button class="mode-btn" data-m="walking" onclick="setMode(this,'walking')">🚶 Jalan Kaki</button>
+        </div>
+        <div class="tombol-rute">
+          <a class="btn btn-primary" id="btn-gmaps" href="#" target="_blank" rel="noopener">Buka di Google Maps →</a>
+          <a class="btn btn-ghost btn-small" id="btn-waze" href="#" target="_blank" rel="noopener">Waze</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const destinasi = [
+  {nama:"Gua Putri",kategori:"gua",tags:["gua","sejarah","legenda","stalaktit","unik","eksotis","edukasi"],
+   desk:"Gua eksotis di Desa Padang Bindu dengan stalaktit indah dan legenda Putri Dayang Merindu.",
+   lat:-4.0883,lon:103.9351,
+   img:"https://img.inews.id/media/1200/files/inews_new/2021/12/14/goa_putri_kabupaten_oku_selatan.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Rantau Kumpai (Danau Ranau OKU)",kategori:"danau",tags:["danau","pantai","air","tenang","pemandangan","luas","santai","keluarga"],
+   desk:"Akses tepi danau luas di jalur OKU yang menawarkan keindahan mirip pesisir pantai.",
+   lat:-4.8333,lon:103.9167,
+   img:"https://1001indonesia.net/asset/2022/07/danau-ranau.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Gua Harimau",kategori:"gua",tags:["gua","arkeologi","fosil","sejarah","purba","ilmu","edukasi","eksplorasi"],
+   desk:"Situs arkeologi penting tempat ditemukannya fosil manusia purba di OKU.",
+   lat:-4.0921,lon:103.9312,
+   img:"https://indonesiavirtualtour.com/storage/destination/CGjWJC0jXNABO4JSpmQxwOvwY8gjJqYu6eUiISrg.jpg",
+   parkir:true,mushola:false,kuliner:false},
+  {nama:"Bukit Balau",kategori:"bukit",tags:["bukit","panorama","ketinggian","kota","pemandangan","alam","foto","sunset"],
+   desk:"Kawasan perbukitan untuk melihat panorama keindahan Kota Baturaja dari ketinggian.",
+   lat:-4.1352,lon:104.1751,
+   img:"https://i.ytimg.com/vi/pMj3GyC1iZ8/sddefault.jpg",
+   parkir:true,mushola:true,kuliner:false},
+  {nama:"Pulau Desa Keban Agung",kategori:"danau",tags:["sungai","pasir","pulau","santai","sore","keluarga","unik","air"],
+   desk:"Wisata daratan pasir/kerikil di tengah sungai Ogan (Desa Keban Agung) yang menyerupai pulau, populer untuk bersantai sore.",
+   lat:-4.1843,lon:104.0541,
+   img:"https://okes.disway.id/upload/2022/05/2-tujuan1.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Taman Bunga Baturaja",kategori:"taman",tags:["taman","bunga","foto","estetik","agrowisata","cantik","warna","instagramable"],
+   desk:"Kawasan agrowisata buatan yang menyajikan hamparan bunga berwarna-warni dengan berbagai spot foto estetik.",
+   lat:-4.1189,lon:104.1425,
+   img:"https://cdn.antaranews.com/cache/1200x800/2025/02/18/1739840051002.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Taman Jodoh",kategori:"taman",tags:["taman","keluarga","anak","santai","kekinian","foto","rekreasi","sore"],
+   desk:"Tempat rekreasi keluarga kekinian di OKU yang menawarkan suasana santai, taman tertata rapi, dan fasilitas ramah anak.",
+   lat:-4.1481,lon:104.1830,
+   img:"https://static.promediateknologi.id/crop/0x0:0x0/1200x0/webp/photo/p1/36/2024/09/24/wisata-OKUJPG-3350087242.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Taman Wisata Telaga Arum",kategori:"taman",tags:["telaga","danau","air","bebek","dayung","sejuk","pondok","santai","keluarga"],
+   desk:"Destinasi wisata air tenang berupa telaga buatan yang dilengkapi wahana bebek dayung, pondokan santai, dan pepohonan rindang.",
+   lat:-4.1122,lon:104.1288,
+   img:"https://static.promediateknologi.id/crop/0x0:0x0/1200x0/webp/photo/p1/1087/2024/09/30/1_20240930_154739_0000-1248215538.jpg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Museum Gua Harimau",kategori:"museum",tags:["museum","sejarah","arkeologi","edukasi","kerangka","purba","artefak","ilmu"],
+   desk:"Museum modern yang menyimpan replika kerangka manusia purba, artefak sejarah, dan edukasi arkeologi peradaban OKU.",
+   lat:-4.0895,lon:103.9330,
+   img:"https://cdn0-production-images-kly.akamaized.net/IusG_0OkB9ud8iyJMznuAfH7w2U=/1200x675/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/3365550/original/025492300_1612202958-WhatsApp_Image_2021-02-01_at_11.27.49_PM.jpeg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Air Terjun Kambas",kategori:"air terjun",tags:["air terjun","tersembunyi","alam","sejuk","segar","hutan","trekking","petualangan","healing"],
+   desk:"Destinasi wisata alam tersembunyi di Desa Ulak Lebar, Kecamatan Ulu Ogan, dengan nuansa hutan alami.",
+   lat:-4.1256,lon:103.9421,
+   img:"https://cdn.antaranews.com/cache/1200x800/2020/08/02/IMG_20200802_165652.jpg",
+   parkir:true,mushola:false,kuliner:false},
+  {nama:"Wisata Kolam Mencar Jaya",kategori:"rekreasi",tags:["kolam","renang","pemandian","alam","keluarga","anak","segar","air","rekreasi"],
+   desk:"Destinasi pemandian alam populer di Desa Kalirejo, Kecamatan Lengkiti.",
+   lat:-4.2384,lon:104.0215,
+   img:"https://rricoid-assets.obs.ap-southeast-4.myhuaweicloud.com/berita/Palembang/o/1736945074114-WhatsApp_Image_2025-01-15_at_7.43.54_PM/2mi43s07sj1dq97.jpeg",
+   parkir:true,mushola:true,kuliner:true},
+  {nama:"Bendungan Perjaya Komering",kategori:"rekreasi",tags:["bendungan","irigasi","megah","pemandangan","sungai","alam","tenang","foto"],
+   desk:"Infrastruktur irigasi megah berskala nasional di Perjaya, Martapura — kini menjadi spot wisata yang menakjubkan.",
+   lat:-4.3315,lon:104.3488,
+   img:"https://palpres.disway.id/upload/c7a47899f56744dab889e0f0ac8e923a.jpg",
+   parkir:true,mushola:true,kuliner:true}
+];
+
+const EMOJI = {gua:"🪨","air terjun":"💧",danau:"🌊",bukit:"⛰️",taman:"🌿",museum:"🏛️",rekreasi:"🎡"};
+
+// ===== RENDER KARTU =====
+function buatKartu(item, skor){
+  const em = EMOJI[item.kategori] || "🏞️";
+  const skorHTML = skor !== undefined ? `<span class="skor-ai">${skor}% cocok</span>` : '';
+  return `<div class="kartu" onclick="bukaDetail(${destinasi.indexOf(item)})">
+    <div class="gambar">
+      <img src="${item.img}" alt="${item.nama}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="gambar-fallback" style="display:none">${em}</div>
+      <span class="badge-kat">${item.kategori}</span>
+      ${skorHTML}
+    </div>
+    <div class="isi">
+      <h3>${item.nama}</h3>
+      <p class="desk">${item.desk}</p>
+      <div class="fasilitas">
+        <span class="fas-chip ${item.parkir?'ada':''}">P Parkir</span>
+        <span class="fas-chip ${item.mushola?'ada':''}">🕌 Mushola</span>
+        <span class="fas-chip ${item.kuliner?'ada':''}">🍽️ Kuliner</span>
+      </div>
+      <div class="aksi">
+        <button class="btn btn-primary btn-small" onclick="event.stopPropagation();bukaDetail(${destinasi.indexOf(item)})">Detail & Rute</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let filterAktif = 'semua';
+function renderSemua(kat='semua'){
+  const daftar = kat==='semua' ? destinasi : destinasi.filter(d => d.kategori === kat);
+  document.getElementById('grid-semua').innerHTML = daftar.length ?
+    daftar.map(d => buatKartu(d)).join('') :
+    `<div style="color:var(--muted);padding:24px;font-size:.9rem;">Tidak ada destinasi untuk kategori ini.</div>`;
+}
+renderSemua();
+
+function filter(el, kat){
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  filterAktif = kat;
+  renderSemua(kat);
+}
+
+// ===== PETA =====
+const peta = L.map('peta',{zoomControl:true}).setView([-4.15,104.05],10);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; OpenStreetMap, CartoDB',maxZoom:18
+}).addTo(peta);
+
+const iconTeal = L.divIcon({
+  html:`<div style="width:14px;height:14px;background:#3ECFBF;border-radius:50%;border:2px solid #0E1012;box-shadow:0 0 8px rgba(62,207,191,0.6)"></div>`,
+  iconSize:[14,14],iconAnchor:[7,7],className:''
+});
+destinasi.forEach((d,i) => {
+  L.marker([d.lat,d.lon],{icon:iconTeal}).addTo(peta)
+    .bindPopup(`<b style="font-family:'Fraunces',serif;font-size:1rem;color:#E8EDF2">${d.nama}</b><br><span style="font-size:.78rem;color:#9AAAB8">${d.kategori}</span><br><button onclick="bukaDetail(${i})" style="margin-top:8px;padding:5px 12px;background:#3ECFBF;border:none;border-radius:6px;font-size:.78rem;cursor:pointer;color:#0a1f1e;font-weight:600">Detail & Rute</button>`,
+      {className:'dark-popup'})
+    .bindTooltip(d.nama,{permanent:false,direction:'top'});
+});
+
+// inject popup style
+const s=document.createElement('style');
+s.textContent=`.dark-popup .leaflet-popup-content-wrapper{background:#1E2327;border:1px solid #2A3038;border-radius:12px;color:#E8EDF2;box-shadow:0 10px 30px rgba(0,0,0,0.5)}.dark-popup .leaflet-popup-tip{background:#1E2327}.leaflet-popup-content{margin:12px 16px}`;
+document.head.appendChild(s);
+
+// ===== AI SEARCH =====
+function pakai(t){document.getElementById('deskripsi').value=t; cariAI();}
+function resetCari(){
+  document.getElementById('deskripsi').value='';
+  document.getElementById('ai-result-box').classList.remove('show');
+}
+
+async function cariAI(){
+  const q = document.getElementById('deskripsi').value.trim();
+  if(!q) return;
+  const box = document.getElementById('ai-result-box');
+  const thinking = document.getElementById('ai-thinking');
+  const aiText = document.getElementById('ai-text');
+  const grid = document.getElementById('grid-ai');
+
+  box.classList.add('show');
+  thinking.style.display='flex';
+  aiText.innerHTML='';
+  grid.innerHTML='';
+
+  const daftarStr = destinasi.map((d,i) =>
+    `[${i}] ${d.nama} (${d.kategori}) — ${d.desk} — Tags: ${d.tags.join(', ')}`
+  ).join('\n');
+
+  const prompt = `Kamu adalah asisten wisata yang ahli tentang destinasi di Kabupaten Ogan Komering Ulu (OKU), Sumatera Selatan.
+
+Berikut daftar destinasi wisata OKU (dengan indeks):
+${daftarStr}
+
+Pengguna mencari: "${q}"
+
+Berikan respons dalam 2 bagian:
+1. Satu paragraf singkat (2-3 kalimat) berisi analisis mengapa kamu merekomendasikan pilihan-pilihan ini untuk keinginan pengguna tersebut.
+2. Setelah paragraf, tulis baris JSON seperti ini (HARUS tepat formatnya):
+REKOMENDASI_JSON:[{"idx":0,"skor":95},{"idx":1,"skor":80}]
+
+Pilih 2-4 destinasi terbaik berdasarkan keinginan pengguna, urutkan dari yang paling cocok. Skor antara 60-100.
+Tulis paragraf dalam bahasa Indonesia yang ramah dan natural.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:600,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.map(c=>c.text||'').join('') || '';
+    thinking.style.display='none';
+
+    const jsonMatch = raw.match(/REKOMENDASI_JSON:(\[[\s\S]*?\])/);
+    const teks = raw.replace(/REKOMENDASI_JSON:[\s\S]*/,'').trim();
+    aiText.innerHTML = `<p>${teks}</p>`;
+
+    if(jsonMatch){
+      const picks = JSON.parse(jsonMatch[1]);
+      grid.innerHTML = picks.map(p => {
+        const d = destinasi[p.idx];
+        return d ? buatKartu(d, p.skor) : '';
+      }).join('');
+    }
+  } catch(e){
+    thinking.style.display='none';
+    aiText.innerHTML=`<p style="color:var(--muted)">Terjadi kesalahan saat menghubungi AI. Coba lagi sebentar ya.</p>`;
+    // Fallback: keyword matching
+    const q2 = q.toLowerCase();
+    const hasil = destinasi.map(d => {
+      let sc = 0;
+      d.tags.forEach(t => {if(q2.includes(t)||t.split(' ').some(w=>q2.includes(w)))sc+=10;});
+      if(q2.includes(d.kategori))sc+=15;
+      return {d,sc};
+    }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,3);
+    grid.innerHTML = hasil.map(x=>buatKartu(x.d,Math.min(95,x.sc))).join('');
+  }
+
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ===== MODAL DETAIL =====
+let aktifIdx = null;
+let modeTrans = 'driving';
+
+function bukaDetail(idx){
+  aktifIdx = idx;
+  const d = destinasi[idx];
+  const img = document.getElementById('modal-img');
+  const fb = document.getElementById('modal-img-fb');
+  img.src = d.img; img.alt = d.nama;
+  img.style.display='block'; fb.style.display='none';
+  document.getElementById('m-kat').textContent = d.kategori.toUpperCase();
+  document.getElementById('m-nama').textContent = d.nama;
+  document.getElementById('m-koord').textContent = `${d.lat.toFixed(4)}, ${d.lon.toFixed(4)} · OKU, Sumatera Selatan`;
+  document.getElementById('m-desk').textContent = d.desk;
+  document.getElementById('m-fas').innerHTML = [
+    {label:'P Parkir',ada:d.parkir},
+    {label:'🕌 Mushola',ada:d.mushola},
+    {label:'🍽️ Kuliner',ada:d.kuliner}
+  ].map(f=>`<span class="fas-chip ${f.ada?'ada':''}">${f.label}</span>`).join('');
+  document.getElementById('rute-asal').value='';
+  modeTrans='driving';
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('on',b.dataset.m==='driving'));
+  updateRute();
+  document.getElementById('overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function tutupModal(){
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function tutupLuar(e){if(e.target.id==='overlay')tutupModal();}
+
+function setMode(el,mode){
+  modeTrans=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  updateRute();
+}
+
+document.getElementById('rute-asal').addEventListener('input',updateRute);
+
+function updateRute(){
+  if(aktifIdx===null)return;
+  const d=destinasi[aktifIdx];
+  const tujuan=`${d.lat},${d.lon}`;
+  const asal=encodeURIComponent(document.getElementById('rute-asal').value.trim());
+  let gmaps=`https://www.google.com/maps/dir/?api=1&destination=${tujuan}&travelmode=${modeTrans}`;
+  if(asal)gmaps+=`&origin=${asal}`;
+  let waze=`https://waze.com/ul?ll=${d.lat},${d.lon}&navigate=yes`;
+  document.getElementById('btn-gmaps').href=gmaps;
+  document.getElementById('btn-waze').href=waze;
+}
+
+function gunakanGPS(){
+  const btn=document.querySelector('.btn-lokasi');
+  if(!navigator.geolocation){btn.textContent='❌ GPS tidak didukung';return;}
+  btn.textContent='⏳ Mencari lokasi...';
+  navigator.geolocation.getCurrentPosition(p=>{
+    const k=`${p.coords.latitude},${p.coords.longitude}`;
+    document.getElementById('rute-asal').value=k;
+    btn.textContent='✅ Lokasi GPS digunakan';
+    updateRute();
+  },()=>{btn.textContent='❌ Gagal, isi manual ya';});
+}
+
+// ===== SPLASH =====
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('splash').classList.add('hide');},2400);
+});
+
+// ===== SCROLL REVEAL =====
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// ===== NAV ACTIVE =====
+const navLinks=document.querySelectorAll('.topnav a');
+window.addEventListener('scroll',()=>{
+  let cur='beranda';
+  ['beranda','destinasi','peta-section','tentang'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-100)cur=id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('aktif',a.getAttribute('href')==='#'+cur);
+  });
+});
+</script>
+</body>
+</html>
