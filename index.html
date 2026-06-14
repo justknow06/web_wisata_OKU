@@ -40,7 +40,7 @@ body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
   transition:opacity 0.6s ease, visibility 0.6s ease;
 }
-#splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none;display:none!important;}
 .splash-logo{
   display:flex;flex-direction:column;align-items:center;gap:16px;
   animation:splashIn 0.8s ease forwards;
@@ -573,62 +573,62 @@ footer .foot-logo svg{width:26px;height:26px;}
 const destinasi = [
   {nama:"Gua Putri",kategori:"gua",tags:["gua","sejarah","legenda","stalaktit","unik","eksotis","edukasi"],
    desk:"Gua eksotis di Desa Padang Bindu dengan stalaktit indah dan legenda Putri Dayang Merindu.",
-   lat:-4.0883,lon:103.9351,
+   lat:-4.063205171033904,lon:103.92536397171604,
    img:"https://backpackerjakarta.com/wp-content/uploads/2016/09/GOA-PUTRI-RAJA-SEMSEL3.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Rantau Kumpai (Danau Ranau OKU)",kategori:"danau",tags:["danau","pantai","air","tenang","pemandangan","luas","santai","keluarga"],
    desk:"Akses tepi danau luas di jalur OKU yang menawarkan keindahan mirip pesisir pantai.",
-   lat:-4.8333,lon:103.9167,
+   lat:-4.820206962670499,lon:103.98228383415912,
    img:"https://1001indonesia.net/asset/2022/07/danau-ranau.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Gua Harimau",kategori:"gua",tags:["gua","arkeologi","fosil","sejarah","purba","ilmu","edukasi","eksplorasi"],
    desk:"Situs arkeologi penting tempat ditemukannya fosil manusia purba di OKU.",
-   lat:-4.0921,lon:103.9312,
+   lat:-4.068474358430619,lon:103.93568669089113,
    img:"https://pariwisataindonesia.id/wp-content/uploads/2021/10/seorang-pemandu-berdiri-di-dalam-sebuah-gua-yang-_131224151328-543.jpg",
    parkir:true,mushola:false,kuliner:false},
   {nama:"Bukit Balau",kategori:"bukit",tags:["bukit","panorama","ketinggian","kota","pemandangan","alam","foto","sunset"],
    desk:"Kawasan perbukitan untuk melihat panorama keindahan Kota Baturaja dari ketinggian.",
-   lat:-4.1352,lon:104.1751,
+   lat:-4.145724666994695,lon:104.20944407420666,
    img:"https://i.ytimg.com/vi/pMj3GyC1iZ8/sddefault.jpg",
    parkir:true,mushola:true,kuliner:false},
   {nama:"Pulau Desa Keban Agung",kategori:"danau",tags:["sungai","pasir","pulau","santai","sore","keluarga","unik","air"],
    desk:"Wisata daratan pasir/kerikil di tengah sungai Ogan (Desa Keban Agung) yang menyerupai pulau, populer untuk bersantai sore.",
-   lat:-4.1843,lon:104.0541,
+   lat:-4.0734326837514025,lon:103.998519908423,
    img:"https://okes.disway.id/upload/2022/05/2-tujuan1.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Taman Bunga Baturaja",kategori:"taman",tags:["taman","bunga","foto","estetik","agrowisata","cantik","warna","instagramable"],
    desk:"Kawasan agrowisata buatan yang menyajikan hamparan bunga berwarna-warni dengan berbagai spot foto estetik.",
-   lat:-4.1189,lon:104.1425,
+   lat:-4.132200378831435,lon:104.19423868333672,
    img:"https://cdn.antaranews.com/cache/1200x800/2025/02/18/1739840051002.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Taman Jodoh",kategori:"taman",tags:["taman","keluarga","anak","santai","kekinian","foto","rekreasi","sore"],
    desk:"Tempat rekreasi keluarga kekinian di OKU yang menawarkan suasana santai, taman tertata rapi, dan fasilitas ramah anak.",
-   lat:-4.1481,lon:104.1830,
+   lat:-4.133811863773296,lon:104.32704661315212,
    img:"https://static.promediateknologi.id/crop/0x0:0x0/1200x0/webp/photo/p1/36/2024/09/24/wisata-OKUJPG-3350087242.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Taman Wisata Telaga Arum",kategori:"taman",tags:["telaga","danau","air","bebek","dayung","sejuk","pondok","santai","keluarga"],
    desk:"Destinasi wisata air tenang berupa telaga buatan yang dilengkapi wahana bebek dayung, pondokan santai, dan pepohonan rindang.",
-   lat:-4.1122,lon:104.1288,
+   lat:-4.201884195807309,lon:104.24771525266716,
    img:"https://static.promediateknologi.id/crop/0x0:0x0/1200x0/webp/photo/p1/1087/2024/09/30/1_20240930_154739_0000-1248215538.jpg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Museum Gua Harimau",kategori:"museum",tags:["museum","sejarah","arkeologi","edukasi","kerangka","purba","artefak","ilmu"],
    desk:"Museum modern yang menyimpan replika kerangka manusia purba, artefak sejarah, dan edukasi arkeologi peradaban OKU.",
-   lat:-4.0895,lon:103.9330,
+   lat:-4.068198834717464,lon:103.92647042887543,
    img:"https://cdn0-production-images-kly.akamaized.net/IusG_0OkB9ud8iyJMznuAfH7w2U=/1200x675/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/3365550/original/025492300_1612202958-WhatsApp_Image_2021-02-01_at_11.27.49_PM.jpeg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Air Terjun Kambas",kategori:"air terjun",tags:["air terjun","tersembunyi","alam","sejuk","segar","hutan","trekking","petualangan","healing"],
    desk:"Destinasi wisata alam tersembunyi di Desa Ulak Lebar, Kecamatan Ulu Ogan, dengan nuansa hutan alami.",
-   lat:-4.1256,lon:103.9421,
+   lat:-4.1122505837024566,lon:103.747546637212,
    img:"https://cdn.antaranews.com/cache/1200x800/2020/08/02/IMG_20200802_165652.jpg",
    parkir:true,mushola:false,kuliner:false},
   {nama:"Wisata Kolam Mencar Jaya",kategori:"rekreasi",tags:["kolam","renang","pemandian","alam","keluarga","anak","segar","air","rekreasi"],
    desk:"Destinasi pemandian alam populer di Desa Kalirejo, Kecamatan Lengkiti.",
-   lat:-4.2384,lon:104.0215,
+   lat:-4.431807363678605,lon:104.33457889494564,
    img:"https://rricoid-assets.obs.ap-southeast-4.myhuaweicloud.com/berita/Palembang/o/1736945074114-WhatsApp_Image_2025-01-15_at_7.43.54_PM/2mi43s07sj1dq97.jpeg",
    parkir:true,mushola:true,kuliner:true},
   {nama:"Bendungan Perjaya Komering",kategori:"rekreasi",tags:["bendungan","irigasi","megah","pemandangan","sungai","alam","tenang","foto"],
    desk:"Infrastruktur irigasi megah berskala nasional di Perjaya, Martapura — kini menjadi spot wisata yang menakjubkan.",
-   lat:-4.3315,lon:104.3488,
+   lat:-4.303138814335508,lon:104.38354073292965,
    img:"https://palpres.disway.id/upload/c7a47899f56744dab889e0f0ac8e923a.jpg",
    parkir:true,mushola:true,kuliner:true}
 ];
@@ -847,18 +847,20 @@ function gunakanGPS(){
   },()=>{btn.textContent='❌ Gagal, isi manual ya';});
 }
 
-// ===== SPLASH =====
-function hideSplash(){
-  document.getElementById('splash').classList.add('hide');
-}
-// Jalankan setelah 2.5 detik, tidak peduli status load halaman
-setTimeout(hideSplash, 2500);
-// Backup: jika load sudah selesai lebih cepat, tetap jalan
-if(document.readyState === 'complete'){
-  setTimeout(hideSplash, 2500);
-} else {
-  window.addEventListener('load', () => setTimeout(hideSplash, 2500));
-}
+// ===== SPLASH — dijalankan pertama, terisolasi dari error lain =====
+(function(){
+  try {
+    var splashTimer = setTimeout(function(){
+      var el = document.getElementById('splash');
+      if(el){ el.classList.add('hide'); }
+    }, 2500);
+    // Backup paksa setelah 4 detik jika timer pertama gagal
+    setTimeout(function(){
+      var el = document.getElementById('splash');
+      if(el){ el.style.display='none'; }
+    }, 4000);
+  } catch(e){}
+})();
 
 // ===== SCROLL REVEAL =====
 const ro=new IntersectionObserver(entries=>{
