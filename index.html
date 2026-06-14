@@ -848,9 +848,17 @@ function gunakanGPS(){
 }
 
 // ===== SPLASH =====
-window.addEventListener('load',()=>{
-  setTimeout(()=>{document.getElementById('splash').classList.add('hide');},2400);
-});
+function hideSplash(){
+  document.getElementById('splash').classList.add('hide');
+}
+// Jalankan setelah 2.5 detik, tidak peduli status load halaman
+setTimeout(hideSplash, 2500);
+// Backup: jika load sudah selesai lebih cepat, tetap jalan
+if(document.readyState === 'complete'){
+  setTimeout(hideSplash, 2500);
+} else {
+  window.addEventListener('load', () => setTimeout(hideSplash, 2500));
+}
 
 // ===== SCROLL REVEAL =====
 const ro=new IntersectionObserver(entries=>{
